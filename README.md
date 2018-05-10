@@ -23,7 +23,7 @@ http://www.gnu.org/licenses.
 
 ### Not included, but required dependencies:
 - topotoolbox Matlab code, download from https://topotoolbox.wordpress.com/
-- DEM spectral analysis tools from Taylor Perron, download from http://web.mit.edu/perron/www/downloads.html
+- DEM spectral analysis tools from J. Taylor Perron (Massachusetts Institute of Technology), download from http://web.mit.edu/perron/www/downloads.html
 
 ### To run MULTIFLOW:
 1. Download all code and data in this repository
