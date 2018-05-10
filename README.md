@@ -25,8 +25,10 @@ http://www.gnu.org/licenses.
 - topotoolbox Matlab code, download from https://topotoolbox.wordpress.com/
 - DEM spectral analysis tools from Taylor Perron, download from http://web.mit.edu/perron/www/downloads.html
 
-### Top level file to run:
-MULTIFLOW_example_run.m
+### To run MULTIFLOW:
+1. Download all code and data in this repository
+2. Download topotoolbox and 2DSpecTools
+3. execute the Matlab file MULTIFLOW_example_run.m
 
 
 
