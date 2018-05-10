@@ -1,8 +1,8 @@
 # MULTIFLOW_lava_flow_model README
 
-Program description: the MULTIFLOW lava flow model performs flow routing on a digital elevation model (DEM) according to the multislope drainage routing algorithm. Multislope is the most laterally dispersive of flow routing algorithms, partitioning flow to all downslope cells in proportion to their local slope. A single calculation results in a map of 'influence', which MULTIFLOW then thresholds according to an empirical function to produce a flow fo finite length. 
+Program description: the MULTIFLOW lava flow model performs flow routing on a digital elevation model (DEM) according to the multislope drainage routing algorithm. Multislope is the most laterally dispersive of flow routing algorithms, partitioning flow to all downslope cells in proportion to their local slope. A single calculation results in a map of 'influence', which MULTIFLOW then thresholds according to an empirical function to produce a flow of finite length. 
 
-MULTIFLOW optionally allows for a pre-processing step of low-pass filtering the base DEM, which removes roughness elements with lateral wavelengths above the filter cutoff. When applied to real lava flows, it is found that filter cutoffs in the range of 50-270 m significantly improve the fit. 
+MULTIFLOW optionally allows for a pre-processing step of low-pass filtering the base DEM, which removes roughness elements with lateral wavelengths above the filter cutoff. When applied to mapped lava flow pathways from Kilauea, Mauna Loa, and Mt Etna volcanoes, it is found that filter cutoffs in the range of 50-270 m significantly improve the fit. 
 
 The manuscript "The multiscale influence of topogaphy on lava flow morphology" by Paul Richardson and Leif Karlstrom, currently under review at Bulletin of Volcanology, details the choice of thresholds and spectral filtering.  
 
