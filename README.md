@@ -8,7 +8,6 @@ The manuscript "The multiscale influence of topogaphy on lava flow morphology" b
 
 This code reproduces Figure 4a and c from Richardson and Karlstrom, the influence and flow matching of the 1984 Mauna Loa lava flow in Hawaii, USA. Spectral filtering is performed on the pre-flow DEM to remove small roughness elements as a model for finite flow thickness. 
 
-----------
 Copyright (C) 2018- Paul Richardson and Leif Karlstrom <leif@uoregon.edu>
 
 This program is free software: you can redistribute it and/or modify it 
@@ -16,17 +15,17 @@ under the terms of the GNU General Public License as published by the
 Free Software Foundation. You should have received a copy of the GNU 
 General Public License along with this program.  If not, see 
 http://www.gnu.org/licenses.
-----------
 
-Included: 
+
+### Included: 
 - Matlab files for the MULTIFLOW code, including hillshade plotting functions and colormaps for plotting
 - 10 m DEM of the Mauna Loa lava flow and background DEM
 
-Not included, but required dependencies:
+### Not included, but required dependencies:
 - topotoolbox Matlab code, download from https://topotoolbox.wordpress.com/
 - DEM spectral analysis tools from Taylor Perron, download from http://web.mit.edu/perron/www/downloads.html
 
-Top level file to run:
+### Top level file to run:
 MULTIFLOW_example_run.m
 
 
