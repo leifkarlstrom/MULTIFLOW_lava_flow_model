@@ -2,11 +2,11 @@
 
 Program description: the MULTIFLOW lava flow model performs flow routing on a digital elevation model (DEM) according to the multislope drainage routing algorithm. Multislope is the most laterally dispersive of flow routing algorithms, partitioning flow to all downslope cells in proportion to their local slope. A single calculation results in a map of 'influence', which MULTIFLOW then thresholds according to an empirical function to produce a flow of finite length. 
 
-MULTIFLOW optionally allows for a pre-processing step of low-pass filtering the base DEM, which removes roughness elements with lateral wavelengths above the filter cutoff. When applied to mapped lava flow pathways from Kilauea, Mauna Loa, and Mt Etna volcanoes, it is found that filter cutoffs in the range of 50-270 m significantly improve the fit. 
+MULTIFLOW optionally allows for a pre-processing step of low-pass filtering the base DEM, which removes roughness elements with lateral wavelengths below the filter cutoff. When applied to mapped lava flow pathways from Kilauea, Mauna Loa, and Mt Etna volcanoes, it is found that filter cutoffs in the range of 50-270 m significantly improve the model fit. 
 
 The manuscript "The multiscale influence of topogaphy on lava flow morphology" by Paul Richardson and Leif Karlstrom, currently under review at Bulletin of Volcanology, details the choice of thresholds and spectral filtering.  
 
-This code reproduces Figure 4a and c from Richardson and Karlstrom, the influence and flow matching of the 1984 Mauna Loa lava flow in Hawaii, USA. Spectral filtering is performed on the pre-flow DEM to remove small roughness elements as a model for finite flow thickness. 
+This code reproduces Figure 4a and c from Richardson and Karlstrom (2018), the influence and flow matching of the 1984 Mauna Loa lava flow in Hawaii, USA. Spectral filtering is performed on the pre-flow DEM to remove small roughness elements as a model for finite flow thickness. 
 
 Copyright (C) 2018- Paul Richardson and Leif Karlstrom <leif@uoregon.edu>
 
