@@ -4,11 +4,11 @@ Program description: the MULTIFLOW lava flow model performs flow routing on a di
 
 MULTIFLOW optionally allows for a pre-processing step of low-pass filtering the base DEM, which removes roughness elements with lateral wavelengths below the filter cutoff. When applied to mapped lava flow pathways from Kilauea, Mauna Loa, and Mt Etna volcanoes, it is found that filter cutoffs in the range of 50-270 m significantly improve the model fit. 
 
-The manuscript "The multiscale influence of topogaphy on lava flow morphology" by Paul Richardson and Leif Karlstrom, currently under review at Bulletin of Volcanology, details the choice of thresholds and spectral filtering.  
+The manuscript "The multiscale influence of topogaphy on lava flow morphology" by Paul Richardson and Leif Karlstrom, currently accepted at Bulletin of Volcanology, details the choice of thresholds and spectral filtering.  
 
-This code reproduces Figure 4a and c from Richardson and Karlstrom (2018), the influence and flow matching of the 1984 Mauna Loa lava flow in Hawaii, USA. Spectral filtering is performed on the pre-flow DEM to remove small roughness elements as a model for finite flow thickness. 
+This code reproduces Figure 4a and c from Richardson and Karlstrom (2019), the influence and flow matching of the 1984 Mauna Loa lava flow in Hawaii, USA. Spectral filtering is performed on the pre-flow DEM to remove small roughness elements as a model for finite flow thickness. 
 
-Copyright (C) 2018- Paul Richardson and Leif Karlstrom <leif@uoregon.edu>
+Copyright (C) 2019- Paul Richardson and Leif Karlstrom <leif@uoregon.edu>
 
 This program is free software: you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 

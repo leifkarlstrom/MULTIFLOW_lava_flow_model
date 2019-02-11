@@ -1,21 +1,22 @@
 %% ------------------------------------------------------------------------
-% * * * * * * ** * * * * MULTIFLOW LAVA FLOW ROUTING CODE * * * * * * * * * * * *
+% * * * * * * * * * MULTIFLOW LAVA FLOW ROUTING CODE * * * * * * * * * * *
 % -------------------------------------------------------------------------
 
 % **Beta version for testing**
 
 % Created by Paul Richardson (3-27-18)
 % Modified by Leif Karlstrom (4-9-18)
+% Modified by Paul Richardson (2-1-19) 
 
 % Program description: This code runs the MULTIFLOW lava flow algorithm. 
 % The flow originates at the 1984 Mauna Loa vent location and attempts 
 % to reproduce the flow. Spectral filtering is performed on the pre-flow
 % DEM to remove small roughness elements as a model for finite flow
-% thickness
+% thickness.
 
 % The progam accompanies the manuscript "The multiscale influence of
 % topogaphy on lava flow morphology" by Paul Richardson and Leif Karlstrom,
-% currently under review at Bulletin of Volcanology
+% currently under review at Bulletin of Volcanology.
 
 % Copyright (C) 2018- Paul Richardson and Leif Karlstrom <leif@uoregon.edu>
 
@@ -30,77 +31,96 @@
 % -------------------------------------------------------------------------
 
 %% ----------------------------- LOAD DATA --------------------------------
-% grid resulution 
+% Mauna Loa DEM gridded to 10 m with surface extrapolated to rectangular boundaries of DEM. 
+load DEMrectangle.dat;
+% Map showing extent of original Mauna Loa DEM
+load DEMboundary.dat;
+% Outline of 1984 Mauna Loa lava flow (kindly shared by Hannah Dietterich, USGS)
+load Flow1984.dat; 
+% DEM showing the original extent (no extrapolated surface)
+DEM = DEMrectangle.*DEMboundary; 
+% grid resolution % (must be same in x- and y-direction
 p.dx = 10; 
-p.dy = 10;
-% Mauna Loa DEM gridded to 10 m 
-[Z10m, dim] = ReadArcGrid('mlpredem_vegremove');
-% LOAD Z10m w/elevations smoothly extrapolated to a rectangular grid. 
-load Z10mEXTRAP.dat; 
-% Flow thickness
-[HanThick, Dhanthick] = ReadArcGrid('ml84_thick');
-% create map of actual flow from flow thickness 
-RealFlow = zeros(size(Z10m)); 
-RealFlow(HanThick>0) = 1;
-
-[p.Ny, p.Nx] = size(Z10m);
 %% ---------------------------- DETREND DEM -------------------------------
-DEM_detrend = Detrend2(Z10mEXTRAP);
-DEM_plane = Z10mEXTRAP - DEM_detrend; 
+% The Detrend function is included with this example code. It was
+% originally created and distributed by Taylor Perron in the 2DSpecTools
+% package (http://web.mit.edu/perron/www/downloads.html). Note: Matlab 
+% includes a function with the same title, so consider renaming this
+% function if problems occur when calling it. 
+
+DEMdetrend = Detrend(DEMrectangle);
+DEMplane = DEMrectangle - DEMdetrend; 
 
 %% ------------------------ LOW PASS FILTER DEM ---------------------------
-FilteredWavelength = 70; % meters (maximized Jaccard Similarity w/parameters below)
+% 2DSpecTools is required to complete the low pass filtering. 2DSpecTools 
+% is freely distributed by Taylor Perron and can be downloaded at
+% http://web.mit.edu/perron/www/downloads.html. 
+% This script was tested with version 1.1 (July 2010). More information 
+% about spectral filtering can be found in "Perron, J.T., J.W. Kirchner and 
+% W.E. Dietrich (2008). Spectral evidence of characteristic spatial scales
+% and non-fractal structure in landscapes. J. Geophys. Res., 113, F04003,
+% doi:10.1029/2007JF000866."
+
 % Filter parameters - - - - - - - - - - - - - - - - - - - - - - - - - -      
+FilteredWavelength = 50; % low pass filter cutoff (meters)
 % flo < fhi 
-flo = 1/(FilteredWavelength + p.dx); % can modify as required   
-fhi = 1/(FilteredWavelength); % can modify as required
+flo = 1/(FilteredWavelength + p.dx); % can modify as desired   
+fhi = 1/(FilteredWavelength); % can modify as desired 
 % Filter the DEM - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Z10mFILT = SpecFilt2D(DEM_detrend,p.dx,p.dy,[flo fhi],'lowpass');
+DEMfiltered = SpecFilt2D(DEMdetrend,p.dx,p.dx,[flo fhi],'lowpass');
 % Add the best-fit plane to the lowpass filtered landscapes
-Z10mFILT = Z10mFILT + DEM_plane;
-Z10mFILT(isnan(Z10m)==1) = nan; 
+DEMfiltered = DEMfiltered + DEMplane;
+DEMfiltered = DEMfiltered.*DEMboundary;
 
 %% --------------------------- RUN MULTIFLOW ------------------------------
+% The MULTIFLOW function requires Topotoolbox to be installed and located
+% in a path accessible by Matlab. Topotoolbox is freely distributed by
+% Wolfgang Schwanghart and can be downloaded from 
+% https://topotoolbox.wordpress.com/download/. This code was tested with
+% version 2.2, which was the most recent release as of 2-1-19. Additional 
+% information can be found in "Schwanghart, W., Scherler, D. (2014): 
+% TopoToolbox 2 – MATLAB-based software for topographic analysis and 
+% modeling in Earth surface sciences. Earth Surface Dynamics, 2, 1-7. 
+% DOI: 10.5194/esurf-2-1-2014." 
+
 % Parameters for MULTIFLOW: these parameters should be parameterized for 
 % each flow. These parameters were picked to produce the highest Jaccard 
-% Similarity. The flow is limited according to log10(Influence) > a*L^b - c
-% where L (km) is the distance from the vent location. 
+% Similarity for the 1984 Mauna Loa flow. The flow is limited according to
+% log10(Influence) > a*L^b - c where L (km) is the distance from the vent
+% location. 
 
-% NOTE: The parameters may require some empirical tuning for each setting
-% as written
-p.a = 1/3; 
-p.b = 0.7;
+% NOTE: The parameters may require some empirical tuning for each flow
+% scenario. 
+p.a = 1/4; 
+p.b = 0.9;
 p.c = 8;
 
 p.VentLocation = [134 1103]; % [x y] pixel location of vent 
 % perform a MULTIFLOW flow prediction on filtered DEM
-[Influence, FlowMap] = MULTIFLOW(Z10mFILT, p);  
+[Influence, FlowMap] = MULTIFLOW(DEMfiltered, p);  
 
 %% ----------------------------- FIGURES ----------------------------------
-% INFLUENCE MAP (limit to log10(Influence) > - 50) 
-Hillshade4(Z10m, p.dx, 'Influence', log10(Influence));
+% - - - - - - map of Influence limited to log10(Influence) > - 50 - - - - - 
+ShadeMap(DEM, p.dx, 'Influence', log10(Influence));
+title('Influence','fontsize',16)
+% modify colormap 
 caxis([-50 0])
 cmap = buildcmap('wyyyymmmrrrccb');
 colormap(cmap); 
-title('Influence','fontsize',16)
-grid off;
 
-% INFLUENCE MAP FOR FLOW ONLY 
+% - - - - - - - - - map of Influence for modeled flow only - - - - - - - - 
 InfluenceMap = FlowMap.*log10(Influence);
 MIN = min(min(InfluenceMap(InfluenceMap>-inf)));
-InfluenceMap(InfluenceMap==0) = MIN;
-Hillshade7(Z10m, p.dx, 'Influence for flow', InfluenceMap);
+InfluenceMap(InfluenceMap==0 | isnan(InfluenceMap) == 1) = MIN;
+ShadeMap(DEM, p.dx, 'Influence for modeled flow', InfluenceMap);
 title('Influence for flow','fontsize',16)
-grid off;
 
-% JACCARD SIMILARITY 
-Hillshade4(Z10m, p.dx, 'Jaccard Similarity', 2*RealFlow + FlowMap);
+% - - - - - - - - - - - - Jaccard Similarity - - - - - - - - - - - - - - - 
+Jaccard_map = 2*Flow1984 + FlowMap;
+ShadeMap(DEM, p.dx, 'Jaccard Similarity', Jaccard_map);
 title({'JACCARD SIMILARITY'; 'black is correctly matched flow';'blue is unmatched flow';...
     'red is overpredicted flow'},'fontsize',14)
-grid off; colorbar off;
-
-
-
+colorbar off;
 
 
 
