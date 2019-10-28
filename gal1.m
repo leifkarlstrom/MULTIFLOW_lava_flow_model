@@ -1,0 +1,1 @@
+[A,R] = geotiffread(MergedClip_20cm.tif);

@@ -62,7 +62,7 @@ DEMplane = DEMrectangle - DEMdetrend;
 % doi:10.1029/2007JF000866."
 
 % Filter parameters - - - - - - - - - - - - - - - - - - - - - - - - - -      
-FilteredWavelength = 50; % low pass filter cutoff (meters)
+FilteredWavelength = 150; % low pass filter cutoff (meters)
 % flo < fhi 
 flo = 1/(FilteredWavelength + p.dx); % can modify as desired   
 fhi = 1/(FilteredWavelength); % can modify as desired 
@@ -71,6 +71,9 @@ DEMfiltered = SpecFilt2D(DEMdetrend,p.dx,p.dx,[flo fhi],'lowpass');
 % Add the best-fit plane to the lowpass filtered landscapes
 DEMfiltered = DEMfiltered + DEMplane;
 DEMfiltered = DEMfiltered.*DEMboundary;
+
+DIFDEM= DEMrectangle - DEMfiltered;
+ShadeMap(DIFDEM, p.dx, 'Diff DEM', DiffDem)
 
 %% --------------------------- RUN MULTIFLOW ------------------------------
 % The MULTIFLOW function requires Topotoolbox to be installed and located
