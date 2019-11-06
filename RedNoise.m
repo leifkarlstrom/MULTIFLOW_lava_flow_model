@@ -1,4 +1,4 @@
-function [M, F] = RedNoise(ny,nx,beta,variance,periodic)
+function [M, F, freq] = RedNoise(ny,nx,beta,variance,periodic)
 
 % M = RedNoise(ny,nx,beta,variance)
 %
@@ -49,7 +49,7 @@ if periodic
     % should initialize the random number generator with something like:
     % s = sum(100*clock);
     % rand('seed',s);
-    F = (rand(ny,nx)-0.5) + 1i* (rand(ny,nx)-0.5);
+    F = ((rand(ny,nx)-0.5) + 1i* (rand(ny,nx)-0.5))*2;
     
     % Identify the DC component
     xc = nx/2+1; yc = ny/2+1; % matrix indices of zero frequency
@@ -87,7 +87,7 @@ else % user did not request periodic output
     % should initialize the random number generator with something like:
     % s = sum(100*clock);
     % rand('seed',s);
-    F = (rand(n)-0.5) + 1i* (rand(n)-0.5);  
+    F = ((rand(n)-0.5) + 1i* (rand(n)-0.5))*2;  
 
     % Identify the DC component
     nc = n/2+1;
@@ -99,7 +99,7 @@ else % user did not request periodic output
     %to make a fractal surface
     
     %modified by A Kubo 10-15-2019
-    F = F .* sqrt(freq .^ -beta);
+    F = F .* freq .^ -beta;
 
     % Set the DC level (= mean of the elevations) to zero
     F(nc,nc) = 0;	 
@@ -118,6 +118,5 @@ else % user did not request periodic output
 
     % % Optional: detrend the surface by subtracting a least-squares plane
     % M = detrend(M);
-
-    
+ 
 end
