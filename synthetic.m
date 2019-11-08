@@ -3,13 +3,16 @@ close all
 ny=500;
 nx=500;
 dx=1;
-
+H=0;
+pad=1;
 periodic=1 ;
+N=1;
 var=546;
 beta=3.0;
 
-[M,F,freq]=RedNoise(ny, nx, beta, var, periodic);
-%ShadeMap(M, 1, "Synthetic", M)
+[M, F, freq] = RedNoise(ny,nx,beta,var,periodic);
+ShadeMap(M, 1, "Synthetic", M)
+
 FilteredWavelength = 50; % low pass filter cutoff (meters)
 % flo < fhi 
 flo = 1/(FilteredWavelength + dx); % can modify as desired   
@@ -23,12 +26,12 @@ DIFDEM= DEMfiltered-M;
 [Pfm, ffm, Pfv, ffv]=fft2D(DEMfiltered, dx, dx);
 
 figure;
-loglog(fv, Pv, 'bo');
+loglog(real(fv), Pv, 'bo');
 hold on
-loglog(freq, F, 'ko');
+loglog(real(freq), F, 'ko');
 Pwr= fv.^(-beta); 
-loglog(fv, Pwr, 'g-');
-loglog(ffv, Pfv, 'ro')
+loglog(real(fv), Pwr, 'g-');
+loglog(real(ffv), Pfv, 'ro')
 legend( "Synthetic", "Frequencies from Rednoise", "f ^-beta line", "Filtered")
 
 ylabel("Spectral Power (m^2)")
