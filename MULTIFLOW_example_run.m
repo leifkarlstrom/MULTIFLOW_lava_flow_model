@@ -73,7 +73,7 @@ DEMfiltered = DEMfiltered + DEMplane;
 DEMfiltered = DEMfiltered.*DEMboundary;
 
 DIFDEM= DEMrectangle - DEMfiltered;
-ShadeMap(DIFDEM, p.dx, 'Diff DEM', DiffDem)
+ShadeMap(DIFDEM, p.dx, 'Diff DEM','jet')
 
 %% --------------------------- RUN MULTIFLOW ------------------------------
 % The MULTIFLOW function requires Topotoolbox to be installed and located
@@ -82,7 +82,7 @@ ShadeMap(DIFDEM, p.dx, 'Diff DEM', DiffDem)
 % https://topotoolbox.wordpress.com/download/. This code was tested with
 % version 2.2, which was the most recent release as of 2-1-19. Additional 
 % information can be found in "Schwanghart, W., Scherler, D. (2014): 
-% TopoToolbox 2 – MATLAB-based software for topographic analysis and 
+% TopoToolbox 2 ï¿½ MATLAB-based software for topographic analysis and 
 % modeling in Earth surface sciences. Earth Surface Dynamics, 2, 1-7. 
 % DOI: 10.5194/esurf-2-1-2014." 
 

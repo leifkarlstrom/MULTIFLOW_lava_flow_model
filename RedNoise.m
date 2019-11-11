@@ -55,6 +55,8 @@ if periodic
     xc = nx/2+1; yc = ny/2+1; % matrix indices of zero frequency
     
     % make a matrix with entries proportional to the frequency
+    
+    % scale to nyquist 
     freq = sqrt( (x-xc).^2 + (y-yc).^2 );
     
     % Reduce high freq components by a power law f^-beta

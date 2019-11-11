@@ -25,7 +25,12 @@ DIFDEM= DEMfiltered-M;
 [Pm, fm, Pv, fv]=fft2D(M, dx, dx);
 [Pfm, ffm, Pfv, ffv]=fft2D(DEMfiltered, dx, dx);
 fs= ny;
-bandstop(Pfv, [flo fhi])
+%bandstop(Pfv, [flo fhi])
+
+% pick out the specific contribution of topography
+% but what is not predicted
+% christine sweeney - geomorphic response at mount saint helens
+% transfer function process T= in/out
 
 figure;
 
@@ -40,7 +45,7 @@ loglog(real(freq), Pwr, 'g-');
 %filtered
 loglog(real(ffv), Pfv, 'ro');
 
-loglog(real(fffv), Pfv, 'bo');
+%loglog(real(fffv), Pfv, 'bo');
 legend( "Synthetic", "f ^-beta line", "Filtered", "double filt")
 
 ylabel("Spectral Power (m^2)")
