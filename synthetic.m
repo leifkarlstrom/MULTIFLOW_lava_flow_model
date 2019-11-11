@@ -11,7 +11,7 @@ var=546;
 beta=3.0;
 
 [M, F, freq] = RedNoise(ny,nx,beta,var,periodic);
-ShadeMap(M, 1, "Synthetic", M)
+%ShadeMap(M, 1, "Synthetic", M)
 
 FilteredWavelength = 50; % low pass filter cutoff (meters)
 % flo < fhi 
@@ -24,15 +24,24 @@ DIFDEM= DEMfiltered-M;
 %ShadeMap(DEMfiltered, dx, 'Filtered', DEMfiltered)
 [Pm, fm, Pv, fv]=fft2D(M, dx, dx);
 [Pfm, ffm, Pfv, ffv]=fft2D(DEMfiltered, dx, dx);
+fs= ny;
+bandstop(Pfv, [flo fhi])
 
 figure;
-loglog(real(fv), Pv, 'bo');
-hold on
+
+% generated from Rednoise Script
 loglog(real(freq), F, 'ko');
-Pwr= fv.^(-beta); 
-loglog(real(fv), Pwr, 'g-');
-loglog(real(ffv), Pfv, 'ro')
-legend( "Synthetic", "Frequencies from Rednoise", "f ^-beta line", "Filtered")
+hold on
+% calculated power based on frequency
+Pwr= freq.^(-beta); 
+% the fourier transform of the topograhy 
+% unfiltered
+loglog(real(freq), Pwr, 'g-');
+%filtered
+loglog(real(ffv), Pfv, 'ro');
+
+loglog(real(fffv), Pfv, 'bo');
+legend( "Synthetic", "f ^-beta line", "Filtered", "double filt")
 
 ylabel("Spectral Power (m^2)")
 xlabel("Frequency (1/m)")

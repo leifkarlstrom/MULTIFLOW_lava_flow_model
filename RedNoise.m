@@ -59,7 +59,7 @@ if periodic
     
     % Reduce high freq components by a power law f^-beta
     %to make a fractal surface
-    F = F .* freq .^ -beta;
+    F = F .* (freq .^ -beta);
     
     % Set the DC level (= mean of the elevations) to zero
     F(yc,xc) = 0;
@@ -99,7 +99,7 @@ else % user did not request periodic output
     %to make a fractal surface
     
     %modified by A Kubo 10-15-2019
-    F = F .* freq .^ -beta;
+    F = F .* (freq .^ -beta);
 
     % Set the DC level (= mean of the elevations) to zero
     F(nc,nc) = 0;	 
