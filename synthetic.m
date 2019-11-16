@@ -10,10 +10,10 @@ N=1;
 var=546;
 beta=3.0;
 
-[M, F, freq] = RedNoise(ny,nx,beta,var,periodic);
+[M, F, freq] = RedNoise(ny,nx, dx,beta,var,periodic);
 %ShadeMap(M, 1, "Synthetic", M)
 
-FilteredWavelength = 50; % low pass filter cutoff (meters)
+FilteredWavelength = 10; % low pass filter cutoff (meters)
 % flo < fhi 
 flo = 1/(FilteredWavelength + dx); % can modify as desired   
 fhi = 1/(FilteredWavelength); % can modify as desired 
@@ -24,8 +24,7 @@ DIFDEM= DEMfiltered-M;
 %ShadeMap(DEMfiltered, dx, 'Filtered', DEMfiltered)
 [Pm, fm, Pv, fv]=fft2D(M, dx, dx);
 [Pfm, ffm, Pfv, ffv]=fft2D(DEMfiltered, dx, dx);
-fs= ny;
-%bandstop(Pfv, [flo fhi])
+
 
 % pick out the specific contribution of topography
 % but what is not predicted
@@ -33,17 +32,19 @@ fs= ny;
 % transfer function process T= in/out
 
 figure;
+% scale freq
+freq= (freq/max(freq(:)))*(dx/2);
 
 % generated from Rednoise Script
 loglog(real(freq), F, 'ko');
 hold on
 % calculated power based on frequency
-Pwr= freq.^(-beta); 
+Pwr= ffv.^(-beta); 
 % the fourier transform of the topograhy 
 % unfiltered
-loglog(real(freq), Pwr, 'g-');
+loglog(real(ffv), Pwr, 'g-');
 %filtered
-loglog(real(ffv), Pfv, 'ro');
+loglog(real(ffm), Pfm, 'ro');
 
 %loglog(real(fffv), Pfv, 'bo');
 legend( "Synthetic", "f ^-beta line", "Filtered", "double filt")

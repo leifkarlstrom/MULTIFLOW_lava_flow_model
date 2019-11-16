@@ -42,7 +42,7 @@ load Flow1984.dat;
 % DEM showing the original extent (no extrapolated surface)
 DEM = DEMrectangle.*DEMboundary; 
 % grid resolution % (must be same in x- and y-direction
-p.dx = 10; 
+dx = 10; 
 %% ---------------------------- DETREND DEM -------------------------------
 % The Detrend function is included with this example code. It was
 % originally created and distributed by Taylor Perron in the 2DSpecTools
@@ -66,13 +66,17 @@ DEMplane = DEMrectangle - DEMdetrend;
 % Filter parameters - - - - - - - - - - - - - - - - - - - - - - - - - -      
 FilteredWavelength = 50; % low pass filter cutoff (meters)
 % flo < fhi 
-flo = 1/(FilteredWavelength + p.dx); % can modify as desired   
+flo = 1/(FilteredWavelength + dx); % can modify as desired   
 fhi = 1/(FilteredWavelength); % can modify as desired 
 % Filter the DEM - - - - - - - - - - - - - - - - - - - - - - - - - - -
-DEMfiltered = SpecFilt2D(DEMdetrend,p.dx,p.dx,[flo fhi],'lowpass');
+DEMfiltered = SpecFilt2D(DEMdetrend,dx,dx,[flo fhi],'lowpass');
 % Add the best-fit plane to the lowpass filtered landscapes
 DEMfiltered = DEMfiltered + DEMplane;
 DEMfiltered = DEMfiltered.*DEMboundary;
+
+DiffDEM= DEMdetrend-DEMfiltered;
+
+height= sum(DiffDEM(:))
 
 %% --------------------------- RUN MULTIFLOW ------------------------------
 % The MULTIFLOW function requires Topotoolbox to be installed and located
