@@ -1,4 +1,4 @@
-function fig = ShadeMap(DEM,dx,name,map)
+function fig = ShadeMap(DEM,dx,name)
 
 % fig = ShadeMap(DEM,dx,name,map)
 % 
