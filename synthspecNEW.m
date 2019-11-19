@@ -38,7 +38,7 @@ if (nargin < 6), window = 0; end
 if (nargin < 5), pad = 1; end
 
 zrange=1; % range of z values
-
+orientation = 1;
 % Allocate memory
 R=DiamondSquare(nrows, ncols, zrange, H);
 

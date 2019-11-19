@@ -47,7 +47,7 @@ end
 % Data windowing
 if window
     % window the DEM with an elliptical Hann (raised cosine) window
-    [dem Wss] = hann2d(dem);
+    [dem Wss] = Hann2D(dem);
 else
     % do not window (really, a square window with a value of 1)
     Wss = sum(sum(ones([ny nx]))); 

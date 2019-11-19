@@ -31,7 +31,7 @@ set(gca,'fontsize',18);
 Xl = 0:dx:dx*N-dx;
 Yl = 0:dx:dx*M-dx;
 
-surf(Xl,Yl,flipud(DEM), flipud(map));
+surf(Xl,Yl,flipud(DEM));
 
 cmap = buildcmap('wrmck');
 colormap(cmap); 
