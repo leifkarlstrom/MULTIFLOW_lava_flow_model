@@ -38,7 +38,7 @@ startRandRange = zrange;
 l=log(tSize-1)/log(2);
 if nargin <3 || ...
    l ~= round(l) || ...
-   H>1.0 || H<0.0
+   H>5.0 || H<0.0
 
     fprintf('Invalid parameter(s). usage of function:\n')
     help createFractalTerrain;
