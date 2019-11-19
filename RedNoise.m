@@ -1,4 +1,4 @@
-function [M, F, freq] = RedNoise(ny,nx,beta,variance,periodic)
+function [M, F, freq] = RedNoise(ny,nx, dx,beta,variance,periodic)
 
 % M = RedNoise(ny,nx,beta,variance)
 %
@@ -55,13 +55,14 @@ if periodic
     xc = nx/2+1; yc = ny/2+1; % matrix indices of zero frequency
     
     % make a matrix with entries proportional to the frequency
-    
-    % scale to nyquist 
     freq = sqrt( (x-xc).^2 + (y-yc).^2 );
     
+    % scale to niquist frequency 
+    %freq = (freq/max(freq(:)))*(dx/2);
+       
     % Reduce high freq components by a power law f^-beta
     %to make a fractal surface
-    F = F .* (freq .^ -beta);
+    F = F .* ((freq .^ -beta));
     
     % Set the DC level (= mean of the elevations) to zero
     F(yc,xc) = 0;
@@ -72,12 +73,13 @@ if periodic
     % scale elevations to a specified total variance
     M = M*sqrt(variance)/std(M(:));
     
+    
     % % alternatively, scale elevations to produce a given relief, such that range(M(:)) = relief
     % M = M*relief/range(M(:));
     
     % % Optional: detrend the surface by subtracting a least-squares plane
     % M = detrend(M);
-    
+   
 else % user did not request periodic output
     
     % grid size
