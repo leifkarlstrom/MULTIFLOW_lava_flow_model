@@ -5,12 +5,12 @@ function P = makeplane(nx, ny,dx, a,b,c)
 %    [a, b, c] - P = (a*X + b*Y + c)
 % Output arguments: 
 %   P - plane of size nx, ny 
-if nargin < 3
-    a= rand*10;
-    b= rand*10;
+if nargin < 4
+    a= rand*-10;
+    b= rand*-10;
     c= rand*100;
 end 
 [X Y] = meshgrid(1:nx,1:ny);
-P = (a*X + b*Y + c)
+P = (a*X + b*Y + c);
 end 
      

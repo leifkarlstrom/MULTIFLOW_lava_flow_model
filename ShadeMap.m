@@ -1,4 +1,4 @@
-function fig = ShadeMap(DEM,dx,name)
+function fig = ShadeMap(DEM,dx,name,map)
 
 % fig = ShadeMap(DEM,dx,name,map)
 % 
@@ -31,7 +31,7 @@ set(gca,'fontsize',18);
 Xl = 0:dx:dx*N-dx;
 Yl = 0:dx:dx*M-dx;
 
-surf(Xl,Yl,flipud(DEM));
+surf(Xl,Yl,flipud(DEM), flipud(map));
 
 cmap = buildcmap('wrmck');
 colormap(cmap); 

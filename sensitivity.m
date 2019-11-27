@@ -1,39 +1,104 @@
 addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/2DSpecTools-v1.1'));
-addpath(gentpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
-
+addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
+format longE
 %% make topo
-Ny= 2048;
-Nx= 2048;
-dx=10;
-var=500;
-H= 0.5;
-FilteredWavelength=50;
-
-[M, DEMfiltered, DIFDEM, TOPOH, Amp] =maketopo(Nx, Ny, dx, var, H, FilteredWavelength);
+Ny= 512;
+Nx= 512;
+p.dx=10;
+vari=500;
+H= 0.7;
+window=0;
+pad=0;
+FilteredWavelength=150;
+[M Pm fm Pv fv] = synthspecNEW(Nx,Ny,10,H,pad,window,vari,1);
+%[M, DEMfiltered, DIFDEM, TOPOH, Amp] =maketopo(Nx, Ny, p.dx, var, H, FilteredWavelength);
 
 %make a plane
-a=.18 
-b=.18
-c=0
-P = makeplane(Nx, Ny,dx, a,b,c)
+a1=-1 ;
+b1=-1;
+c1=0;
+P = makeplane(Nx, Ny, p.dx,a1,b1, c1 );
 
 %%add plane
-M=M+P;
-DEM=DEMfiltered+P;
+
+%ShadeMap(DEM, p.dx, 'DEM', DEM);
 %% set location of vent
 
-p.VentLocation = [134 1103]; % [x y] pixel location of vent 
+p.VentLocation = [30 30]; % [x y] pixel location of vent 
 
-%% set parameters
-% NOTE: The parameters may require some empirical tuning for each flow
-% scenario. 
-p.a = 1/4; 
-p.b = 0.9;
-p.c = 8;
 
-%% run multiflow
-[Influence, FlowMap] = MULTIFLOW(DEM, p);  
+i=1; 
 
-%% evaluate flow
+sensitivity_param=zeros(27,8);
+for w= 0.1:0.1:1.0
+    for q= 0.1:0.1:1.0
+        for r = 1:1:10
+            for FilteredWavelength=50:50:250
+            
+                flo = 1/(FilteredWavelength + p.dx); % can modify as desired   
+                fhi = 1/(FilteredWavelength); % can modify as desired 
+                % Filter the DEM - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                DEMfiltered = SpecFilt2D(M, p.dx, p.dx,[flo fhi],'lowpass');
 
-%[Area, Volume, Bi, Length]= evalflow(FlowMap,DIFDEM, dx dy, P.VentLocation, H);
+                % Create a binned "1D" power spectrum
+                nbin=50;  % number of logarithmically spaced bins
+                B = bin(log10(fv),log10(Pv),nbin,0); % bin the log-transformed data. 
+
+                % Fit trend to all bins
+                fit = robustfit(B(:,1),B(:,2));
+                %plot(10.^B(:,1),10^fit(1)*(10.^B(:,1)).^fit(2),'k', 'LineWidth', 2);
+                Spectral_slope = fit(2);
+                DIFDEM= (M-DEMfiltered);
+                DIFDEM=abs(DIFDEM);
+                TOPOH=max(DIFDEM(:));
+                fhi_m= [ flo, fhi, fhi+(1/p.dx)]; 
+                %[beta_calc, c]= slopeof(M,dx);
+                %pwr= abs((10^c)*(fhi_m.^beta_calc))
+                Powers= abs(Pv( fv>flo & fv<fhi));
+                epwr=sum(Powers);
+                Amp= 2*sqrt(epwr);
+            
+                p.a = w; 
+                p.b = q;
+                p.c = r;
+                DEM=DEMfiltered+P;
+                %% run multiflow
+                [Influence, FlowMap] = MULTIFLOW(DEM, p);  
+
+                %% evaluate flow
+
+                [Area, Volume, Bi, Length]= evalflow(FlowMap, DIFDEM, p.dx, p.VentLocation, Amp);
+
+
+        %        if mod(4,i) == 0
+        %            InfluenceMap = FlowMap.*log10(Influence);
+        %            MIN = min(min(InfluenceMap(InfluenceMap>-inf)));
+        %            InfluenceMap(InfluenceMap==0 | isnan(InfluenceMap) == 1) = MIN;
+        %            ShadeMap(DEM, p.dx, 'Influence for modeled flow', InfluenceMap)
+        %            hold on 
+        %            yloc=(Ny-p.VentLocation(2))*p.dx;
+        %            xloc=(p.VentLocation(1))*p.dx;
+        %            plot( xloc, yloc, 'k*')
+        %        end 
+            
+
+                sensitivity_param(i,1)= w;
+                sensitivity_param(i,2)= q;
+                sensitivity_param(i,3)= r; 
+                sensitivity_param(i,4)= FilteredWavelength; 
+                sensitivity_param(i,5)= Area; 
+                sensitivity_param(i,6)= Volume;
+                sensitivity_param(i,7)= Bi;
+                sensitivity_param(i,8)= Length;
+
+                i=i+1
+            end 
+        end 
+    end 
+end
+
+%% a 
+
+%% b
+
+%% c 
