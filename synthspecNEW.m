@@ -57,10 +57,10 @@ f=zeros(size(fvec));
 fm=zeros(size(freqmat));
 
 % seed random number generator
-s = sum(100*clock);
+s = 3500; %sum(100*clock);
 rand('seed',s);
 
-h = waitbar(0,'Calculating synthetic spectra...'); % Progress bar
+%h = waitbar(0,'Calculating synthetic spectra...'); % Progress bar
 
 for i=1:N
    
@@ -74,7 +74,7 @@ for i=1:N
     Pm=Pm+Pmat;
     fm=fm+freqmat;
 
-    waitbar(i/N) 
+    %waitbar(i/N) 
     
 end
 
@@ -89,4 +89,4 @@ fm=fm/N;
 P = P*var/sum(P);
 Pm = Pm*var/sum(Pm(:)); 
         
-close(h)
+%close(h)

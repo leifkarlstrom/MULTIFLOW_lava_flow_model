@@ -1,25 +1,29 @@
-figure;
-hold on 
-for W=50:50:200
-    [TOPOH, H]= maketopo(W);
-    scatter(W,H, 'b')
-    scatter(W,TOPOH, 'r')
-end
-
-
-function [TOPOH, Amp] =maketopo(FilteredWavelength)
-% testing 
-ny=512;
-nx=512;
-dx=10;
-H=0.5;
+function [M, DEMfiltered, DIFDEM, TOPOH, Amp] =maketopo(Nx, Ny, dx, var, H, FilteredWavelength)
+% function [M, DEMfiltered, TOPOH, Amp] =maketopo(Nx, Ny, dx, var, H, FilteredWavelength)
+% Inputs:
+%   Nx, Ny - size of topo array, should be in form 2^n
+%   dx - x and y resolution, assumed to be the same (m)
+%   var - varience of topography, varience is equal to the sum of the PDFT 
+%       varience controls the topographic heights of the topography
+%   H - roughness parameter between 0 and 1 
+%       the spectral slope, beta, is equal to 1+2*H 
+%       H should be 0.5 or greater for fully fractal topography
+%   FilteredWavelength   - cut off of lowpass filtered in meters
+%%
+% Outputs:
+%   M - unflitered topography of size (Nx, Nx)
+%   DEMfiltered - filtered at low pass filter of Filtered Wavelength
+%   DIFDEM - difference between filtered and original topo
+%   TopoH  - max of DIFDEM
+%   Amp - minimum height cut off at filtered wavelength
+%       2*sqrt( sum of PDFT around filteredwavelent) (m)
 pad=0;
 periodic=1 ;
 var=600;
 beta=1+2*H;
 window=0;
 
-[M Pm fm Pv fv] = synthspecNEW(nx,ny,dx,H,pad,window,var);
+[M Pm fm Pv fv] = synthspecNEW(Nx,Ny,dx,H,pad,window,var);
 %ShadeMap(M, 1, "Synthetic")
 %figure;
 % generated from Rednoise Script
