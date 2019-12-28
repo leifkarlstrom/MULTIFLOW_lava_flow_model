@@ -73,7 +73,7 @@ DEMfiltered = DEMfiltered + DEMplane;
 DEMfiltered = DEMfiltered.*DEMboundary;
 
 DIFDEM= DEMrectangle - DEMfiltered;
-ShadeMap(DIFDEM, p.dx, 'Diff DEM','jet')
+ShadeMap(DIFDEM, p.dx, 'Diff DEM', DIFDEM)
 
 %% --------------------------- RUN MULTIFLOW ------------------------------
 % The MULTIFLOW function requires Topotoolbox to be installed and located
@@ -112,7 +112,7 @@ cmap = buildcmap('wyyyymmmrrrccb');
 colormap(cmap); 
 
 % - - - - - - - - - map of Influence for modeled flow only - - - - - - - - 
-InfluenceMap = FlowMap.*log10(Influence);
+InfluenceMap = Flow1984.*log10(Influence);
 MIN = min(min(InfluenceMap(InfluenceMap>-inf)));
 InfluenceMap(InfluenceMap==0 | isnan(InfluenceMap) == 1) = MIN;
 ShadeMap(DEM, p.dx, 'Influence for modeled flow', InfluenceMap);

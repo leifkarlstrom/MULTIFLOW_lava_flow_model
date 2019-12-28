@@ -1,4 +1,4 @@
-function [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
+function [Influence, FlowMap] = MULTIFLOW3(DEMprefill, a, b1, b2, c, d)
 
 % [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
 %
@@ -14,7 +14,7 @@ function [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
 % https://topotoolbox.wordpress.com/download/. This code was tested with
 % version 2.2, which was the most recent release as of 2-1-19. Additional 
 % information can be found in "Schwanghart, W., Scherler, D. (2014): 
-% TopoToolbox 2 – MATLAB-based software for topographic analysis and 
+% TopoToolbox 2 ï¿½ MATLAB-based software for topographic analysis and 
 % modeling in Earth surface sciences. Earth Surface Dynamics, 2, 1-7. 
 % DOI: 10.5194/esurf-2-1-2014." 
 %
@@ -64,8 +64,17 @@ X_dist = X - p.VentLocation(1);
 Y_dist = Y - p.VentLocation(2);
 % Calculate distance from vent to each pixel 
 DISTANCE = sqrt(X_dist.^2 + Y_dist.^2)*p.dx/1000;
+
+
+% factor based on background slope 
+% is the location downhill of the vent? 
+% vent - loc/distance = slope 
+%  if slope is negative that is good 
+slopefactor = (DEM(VentLocation(1), VentLocation(2)) - DEM) ./ DISTANCE;
+
+DIFDEM(DIFDEM < 0) = 0;
 % threshold
-INFLUENCE_THRESHOLD = p.a*(DISTANCE.^p.b) - p.c;
+INFLUENCE_THRESHOLD = a*DiffDEM + b1*(DISTANCE.^b2) + d*slopefactor;
 INFLUENCE_THRESHOLD(INFLUENCE_THRESHOLD> 0) = 0;    
 MARKERMAP = ones(M, N);  
 FlowMap = MARKERMAP.*(log10(Influence) > INFLUENCE_THRESHOLD);     

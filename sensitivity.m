@@ -30,9 +30,9 @@ p.VentLocation = [30 30]; % [x y] pixel location of vent
 i=1; 
 
 sensitivity_param=zeros(27,8);
-for w= 0.1:0.1:1.0
-    for q= 0.1:0.1:1.0
-        for r = 1:1:10
+for w= 0.1:0.5:10
+    for q= 0.1:0.5:10
+        for r = 1:0.5:10
             for FilteredWavelength=50:50:250
             
                 flo = 1/(FilteredWavelength + p.dx); % can modify as desired   
@@ -97,8 +97,4 @@ for w= 0.1:0.1:1.0
     end 
 end
 
-%% a 
-
-%% b
-
-%% c 
+writematrix(sensitivity_param, 'param3.txt')
