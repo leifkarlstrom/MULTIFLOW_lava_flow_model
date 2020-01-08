@@ -1,7 +1,10 @@
 close all
 
-addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/2DSpecTools-v1.1'));
-addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
+%addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/2DSpecTools-v1.1'));
+%addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
+
+addpath(genpath('/Users/akubo/myprojects/MULTIFLOW_lava_flow_model/2DSpecTools-v1.1'));
+addpath(genpath('/Users/akubo/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
 
 %% ----------------------------- LOAD DATA --------------------------------
 % Mauna Loa DEM gridded to 10 m with surface extrapolated to rectangular boundaries of DEM. 
@@ -70,13 +73,13 @@ clear DEMtopo;
 FD = FLOWobj(DEMf,'multi');
 % spread flow from single location 
 W0 = zeros(size(DEMf.Z));
-W0(p.VentLocation(2), p.VentLocation(1)) = 1; 
+W0(VentLocation(2), VentLocation(1)) = 1; 
 InfluenceNewUD = flowacc(FD,flipud(W0));
 % extract Influence and flip back to original orientation
 Influence = flipud(InfluenceNewUD.Z);
 
 %%
-ShadeMap(DEM, p.dx, 'Influence', log10(Influence));
+ShadeMap(DEM, dx, 'Influence', log10(Influence));
 title('Influence','fontsize',16)
 % modify colormap 
 caxis([-50 0])
@@ -108,12 +111,13 @@ slopefactor = (DEM(VentLocation(1), VentLocation(2)) - DEM) ./ DISTANCE;
 % for a=[.00001, .010]
 %     for b=[.001, .01]
 %         for c=[10]
-a= -0.01;
-b1=-0.01;
+a= -1;
+b1=-.1;
 b2=1;
-d= -10;
-            DIFDEM(DIFDEM < 0) = 0;
-            INFLUENCE_THRESHOLD= a*DiffDEM + b1*(DISTANCE.^b2) + d*slopefactor;
+d= 10;
+c= -5;
+            DiffDEM(DiffDEM < 0) = 0;
+            INFLUENCE_THRESHOLD= a*DiffDEM + b1*(DISTANCE.^b2) + d*slopefactor +c ;
             INFLUENCE_THRESHOLD(INFLUENCE_THRESHOLD> 0) = 0;  
 
             %FlowMap= threshold(INFLUENCE_THRESHOLD, Influence);

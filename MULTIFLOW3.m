@@ -1,4 +1,4 @@
-function [Influence, FlowMap] = MULTIFLOW3(DEMprefill, a, b1, b2, c, d)
+function [Influence, FlowMap] = MULTIFLOW3(DEMunprocessed, DEMboundary, m)
 
 % [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
 %
@@ -42,17 +42,52 @@ function [Influence, FlowMap] = MULTIFLOW3(DEMprefill, a, b1, b2, c, d)
 % http://www.gnu.org/licenses.
 % -------------------------------------------------------------------------
 
+FilteredWavelength=m(1);
+a=m(2); 
+b1=m(3);
+b2=m(4);
+c=m(5);
+d=m(6);
+%% ---------------------------- DETREND DEM -------------------------------
+% The Detrend function is included with this example code. It was
+% originally created and distributed by Taylor Perron in the 2DSpecTools
+% package (http://web.mit.edu/perron/www/downloads.html). Note: Matlab 
+% includes a function with the same title, so consider renaming this
+% function if problems occur when calling it. 
+
+VentLocation = [134 1103];
+
+[DEMdetrend, xplane, yplane] = Detrend2(DEMunprocessed);
+
+DEMplane = DEMunprocessed - DEMdetrend; 
+dx = 10;
+% flo < fhi 
+flo = 1/(FilteredWavelength + dx); % can modify as desired   
+fhi = 1/(FilteredWavelength); % can modify as desired 
+% Filter the DEM - - - - - - - - - - - - - - - - - - - - - - - - - - -
+DEMfiltered = SpecFilt2D(DEMdetrend,dx,dx,[flo fhi],'lowpass');
+% Add the best-fit plane to the lowpass filtered landscapes
+DEMfiltered = DEMfiltered + DEMplane;
+DEMfiltered = DEMfiltered.*DEMboundary;
+
+DiffDEM= DEMunprocessed.*DEMboundary - DEMfiltered;
+PosDEM = DiffDEM > 0; 
+NegDEM = DiffDEM < 0; 
+%% put bag the parts that are cut off 
+
+DEMfiltered = DEMfiltered.*PosDEM+ (DEMdetrend.*DEMboundary).*NegDEM;
+
 % - - - - - - - - - - - - - calculate influence - - - - - - - - - - - - - -
-[M, N] = size(DEMprefill) % M x N : Y-dimension x X-dimension
+[M, N] = size(DEMfiltered); % M x N : Y-dimension x X-dimension
 % fill DEM w/TopoToolbox
-DEMtopo = GRIDobj(1:N,1:M,DEMprefill);
+DEMtopo = GRIDobj(1:N,1:M,DEMfiltered);
 DEMf = fillsinks(DEMtopo);
 clear DEMtopo;
 % calculate drainage directions
 FD = FLOWobj(DEMf,'multi');
 % spread flow from single location 
 W0 = zeros(size(DEMf.Z));
-W0(p.VentLocation(2), p.VentLocation(1)) = 1; 
+W0(VentLocation(2), VentLocation(1)) = 1; 
 InfluenceNewUD = flowacc(FD,flipud(W0));
 % extract Influence and flip back to original orientation
 Influence = flipud(InfluenceNewUD.Z);
@@ -60,21 +95,21 @@ Influence = flipud(InfluenceNewUD.Z);
 % - - - - - - - - - - - - - apply threshold - - - - - - - - - - - - - - - -
 % x and y pixel distance from vent 
 [X, Y] = meshgrid(1:N, 1:M);
-X_dist = X - p.VentLocation(1);
-Y_dist = Y - p.VentLocation(2);
+X_dist = X - VentLocation(1);
+Y_dist = Y - VentLocation(2);
 % Calculate distance from vent to each pixel 
-DISTANCE = sqrt(X_dist.^2 + Y_dist.^2)*p.dx/1000;
+DISTANCE = sqrt(X_dist.^2 + Y_dist.^2)*dx/1000;
 
 
 % factor based on background slope 
 % is the location downhill of the vent? 
 % vent - loc/distance = slope 
 %  if slope is negative that is good 
-slopefactor = (DEM(VentLocation(1), VentLocation(2)) - DEM) ./ DISTANCE;
+slopefactor = (DEMfiltered(VentLocation(1), VentLocation(2)) - DEMfiltered) ./ DISTANCE;
 
-DIFDEM(DIFDEM < 0) = 0;
+DiffDEM(DiffDEM < 0) = 0;
 % threshold
-INFLUENCE_THRESHOLD = a*DiffDEM + b1*(DISTANCE.^b2) + d*slopefactor;
+INFLUENCE_THRESHOLD = a*DiffDEM + b1*(DISTANCE.^b2) + d*slopefactor +c ;
 INFLUENCE_THRESHOLD(INFLUENCE_THRESHOLD> 0) = 0;    
 MARKERMAP = ones(M, N);  
 FlowMap = MARKERMAP.*(log10(Influence) > INFLUENCE_THRESHOLD);     

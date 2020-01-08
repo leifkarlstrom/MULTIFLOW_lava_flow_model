@@ -12,6 +12,7 @@ function [Area, Volume, Bi, FlowDistance]= evalflow(FlowMap,DIFDEM, dx, Loc, H)
                 if sum(window(:)) < 9
                     EDGE(ik, jk) = 1;
                     Dist= sqrt( (Loc(1)-jk)^2 + (Loc(2)-ik)^2 )*dx;
+                    FlowXY=[ik,jk]
                 end;
                 
                 if Dist>FlowDistance 

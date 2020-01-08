@@ -14,7 +14,7 @@ function [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
 % https://topotoolbox.wordpress.com/download/. This code was tested with
 % version 2.2, which was the most recent release as of 2-1-19. Additional 
 % information can be found in "Schwanghart, W., Scherler, D. (2014): 
-% TopoToolbox 2 – MATLAB-based software for topographic analysis and 
+% TopoToolbox 2 ï¿½ MATLAB-based software for topographic analysis and 
 % modeling in Earth surface sciences. Earth Surface Dynamics, 2, 1-7. 
 % DOI: 10.5194/esurf-2-1-2014." 
 %
@@ -43,7 +43,7 @@ function [Influence, FlowMap] = MULTIFLOW(DEMprefill, p)
 % -------------------------------------------------------------------------
 
 % - - - - - - - - - - - - - calculate influence - - - - - - - - - - - - - -
-[M, N] = size(DEMprefill) % M x N : Y-dimension x X-dimension
+[M, N] = size(DEMprefill) ; % M x N : Y-dimension x X-dimension
 % fill DEM w/TopoToolbox
 DEMtopo = GRIDobj(1:N,1:M,DEMprefill);
 DEMf = fillsinks(DEMtopo);
