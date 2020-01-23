@@ -8,21 +8,21 @@ dx=10;
 H=0.7;
 pad=0;
 periodic=1 ;
-var=700;
-beta=1+2*H;
+var=1000;
+
 window=0;
-Filter=[50 150];
+Filter=[100 200];
 H=[0.5, 0.7];
 
 lowerlim=-10;
-figure;
+figure; 
 
 for i=1:2
     
     [M Pm fm Pv fv] = synthspecNEW(nx,ny,dx,H(i),pad,window,var);
  
-    
-    P = makeplane(M, -1, -1,10);
+    beta=1+2*H(i);
+    P = makeplane(M, -.5, -.5,10);
     DEM=P+M;
     Influence=influ(DEM,dx); 
 
@@ -45,17 +45,19 @@ for i=1:2
         flo = 1/(FilteredWavelength + dx); % can modify as desired   
         fhi = 1/(FilteredWavelength); % can modify as desired 
         % Filter the DEM - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        DEMprefill = SpecFilt2D(M, dx, dx,[flo fhi],'lowpass');
+    
 
-        [ny, nx] = size(DEMprefill); % M x N : Y-dimension x X-dimension
+        [ny, nx] = size(DEM); % M x N : Y-dimension x X-dimension
 
         P = makeplane(DEM, -2, -2,10);
-        DEM= P+DEMprefill;
+        DEM= P+DEM;
         Influence=influ(DEM, dx);
         Xl = 0:dx:dx*nx-dx;
         Yl = 0:dx:dx*ny-dx;
 
-        pn=n+i^2;
+        beta
+        
+        pn=n+i^2
         subplot(2,3, pn )
         set(gcf,'color','w');
         set(gca,'fontsize',18);
@@ -77,10 +79,9 @@ for i=1:2
     
 end 
 
+%
 
-hp4 = get(subplot(2,3,6),'Position')
-colorbar('Position', [hp4(1)+hp4(3)+0.1  hp4(2)  0.1  hp4(2)+hp4(3)*2.1])
-
+print(gcf, 'filterfig', '-dsvg', '-r600')
 function Influence=influ(DEM,dx)
     [M, N] = size(DEM);
 

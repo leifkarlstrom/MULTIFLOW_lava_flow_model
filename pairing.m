@@ -1,4 +1,4 @@
-function N= pairing2(FlowMap)
+function N= pairing(FlowMap)
     [Ny, Nx] = size(FlowMap);
     EDGE = zeros(Ny, Nx);
     for ik = 2:Ny-1
@@ -25,7 +25,7 @@ function N= pairing2(FlowMap)
                 coords(loc,1)=NaN;
                 coords(loc,2)=NaN;
             end 
-            loc=loc+1
+            loc=loc+1;
         end 
         
     end 
