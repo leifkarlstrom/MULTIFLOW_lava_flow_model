@@ -6,24 +6,24 @@ Ny= 512;
 Nx= 512;
 dx=10;
 vari=500;
-H= 0.7;
-window=0;
-pad=0;
+H= 1;
+window=1;
+pad=1;
 [M Pm fm Pv fv] = synthspecNEW(Nx,Ny,10,H,pad,window,vari,1);
+
+
 
 % Create a binned "1D" power spectrum
 nbin=50;  % number of logarithmically spaced bins
 B = bin(log10(fv),log10(Pv),nbin,0); % bin the log-transformed data.
-
-fprintf("Spectral Slope is")
-Spectral_slope = fit(2)
-
 % Fit trend to all bins
 fit = robustfit(B(:,1),B(:,2));
 % figure;
 % plot(log(fv), log(Pv))
 % hold on
 % plot( log(10.^B(:,1)), log(10^fit(1)*(10.^B(:,1)).^fit(2)),'k', 'LineWidth', 2);
+fprintf("Spectral Slope is")
+Spectral_slope = fit(2)
 
 
 
@@ -55,7 +55,7 @@ for FilteredWavelength=[20:100:820];
     Amp= 2*sqrt(epwr)
 
     fprintf('DIFDEM median cutoff')
-    DEMCUTOFF= mean(DIFDEM(DIFDEM >0))
+    DEMCUTOFF= mean(max(DIFDEM));
 
     fprintf('Misfit')
     misfit= DEMCUTOFF-Amp
@@ -66,14 +66,18 @@ for FilteredWavelength=[20:100:820];
 end
 
 figure;
-subplot(2,1,1)
-plot(specs(:,1), specs(:,2), 'r')
+%subplot(2,1,1)
 hold on
+ylabel('Height of Bumps cut off (m)')
+plot(specs(:,1), specs(:,2), 'r')
 plot(specs(:,1), specs(:,4), 'b')
-plot(specs(:,1), specs(:,3), 'g')
-hold off 
+%plot(specs(:,1), specs(:,3), 'g')
 
-subplot(2,1,2)
-plot(specs(:,1), specs(:,5), 'r')
-hold on 
-plot(specs(:,1), specs(:,6), 'g')
+
+%subplot(2,1,2)
+%plot(specs(:,1), specs(:,5), 'r')
+%hold on 
+%plot(specs(:,1), specs(:,6), 'g')
+xlabel('Low Pass Filter Cutoff (1/m)')
+
+legend ('2*sqrt(sum PDF)', 'Mean of Difference in DEMS', 'Location', 'northwest')

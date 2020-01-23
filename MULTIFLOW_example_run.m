@@ -29,7 +29,8 @@
 %% ------------------------------------------------------------------------
 % * * * * * * ** * * * * MULTIFLOW ANALYSIS EXAMPLE * * * * * * * * * * * *
 % -------------------------------------------------------------------------
-
+addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/2DSpecTools-v1.1'));
+addpath(genpath('/home/akh/myprojects/MULTIFLOW_lava_flow_model/topotoolbox-master'));
 %% ----------------------------- LOAD DATA --------------------------------
 % Mauna Loa DEM gridded to 10 m with surface extrapolated to rectangular boundaries of DEM. 
 load DEMrectangle.dat;
