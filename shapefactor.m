@@ -1,18 +1,6 @@
-%% ----------------------------- LOAD DATA --------------------------------
-% Mauna Loa DEM gridded to 10 m with surface extrapolated to rectangular boundaries of DEM. 
-load DEMrectangle.dat;
-% Map showing extent of original Mauna Loa DEM
-load DEMboundary.dat;
-% Outline of 1984 Mauna Loa lava flow (kindly shared by Hannah Dietterich, USGS)
-load Flow1984.dat; 
-% DEM showing the original extent (no extrapolated surface)
-DEM = DEMrectangle.*DEMboundary; 
-% grid resolution % (must be same in x- and y-direction
-dx = 10; 
-FlowMap=Flow1984;
-%ShadeMap(DEM, dx, 'Flow', Flow1984)
-% Ventlocation
-VentLocation = [134 1103]; 
+function SHAPES = shapefactor(Name, FlowMap, dx, VentLocation)
+    
+
 %% ----------------------------- CALCULATE SCALAR VALUES ---------------
 [Ny, Nx] = size(FlowMap);
 
@@ -21,7 +9,7 @@ Area= sum(FlowMap(:))*dx*dx;
 
 % count holes 
 % note to self is bweuler or imfill then bweuler better to calculate holes?
-nholes= -1*(bweuler(FlowMap, 4)-1);
+nholes= bweuler(FlowMap, 4);
 
 % fill holes
 filled = imfill(FlowMap, 'holes');
@@ -76,7 +64,7 @@ Perimeter = EdgeLength-Hole_perimeter;
 Centroid = mean([x(logical(FlowMap)), y(logical(FlowMap))]);
 
 %distance from vent to centroid
-CentDist = sqrt((centroid(1)-VentLocation(1))^2 + (centroid(2)-VentLocation(2))^2);
+CentDist = sqrt((Centroid(1)-VentLocation(1))^2 + (Centroid(2)-VentLocation(2))^2);
 
 %figure;
 %imshow(FlowMap)
@@ -135,7 +123,7 @@ for i = 1:1:length(transects)
                 width=Edge2-Edge1;
 
                 if width>FlowWidth 
-                    FlowWidth=Width;
+                    FlowWidth=width;
                 end 
             end
         end 
@@ -172,3 +160,14 @@ IOP = Hole_perimeter/Perimeter;
 % Gap vs Total Area 
 GArea= area_h/Area;
 
+% Bifrication ratio
+Bf = max(branch)+nholes;
+
+
+SHAPES= [Name, Aspect, r_h, wave, circ, Bi, Bf, IOP, GArea]
+% add to file
+fid = fopen('shape.txt', 'a+');
+fprintf(fid, '%d %d %d %d %d %d %d %d %d\n', SHAPES);
+fclose(fid);
+
+end
