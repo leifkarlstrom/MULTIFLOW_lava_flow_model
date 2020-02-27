@@ -59,5 +59,5 @@ DEM = KilaueaDEM(1:end, 1:end);
 ShadeMap(DEM, dx, 'Flow', FlowMap)
 
 %Name=2011
-%SHAPES=shapefactor(Name, FlowMap, dx, VentLocation);
+SHAPES=shapefactor(FlowMap, dx, VentLocation);
 

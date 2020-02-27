@@ -1,4 +1,4 @@
-function SHAPES = shapefactor(Name, FlowMap, dx, VentLocation)
+function SHAPES = shapefactor(FlowMap, dx, VentLocation)
     
 
 %% ----------------------------- CALCULATE SCALAR VALUES ---------------
@@ -17,15 +17,15 @@ filled = imfill(FlowMap, 'holes');
 % total area of holes =  sum of the filled - original
 
 holes = filled - FlowMap;
-nholes2=bweuler(holes); 
-area_h= sum(holes(:));
+[holes, nholes]=bwlabel(holes, 4); 
+area_h= (length(find(holes==1)))*dx*dx;
 
 % ASSIGN VARIABLE FOR LOOP TO FIND EDGES AND LENGTH 
 FlowDistance=0;
 EDGE = zeros(Ny, Nx);
 HEDGE = zeros(Ny, Nx);
 Tip=zeros(2,1);
-
+Dist=0;
 % LOOP THROUGH NY AND NX
 for ik = 2:Ny-1
     for jk = 2:Nx-1
@@ -141,7 +141,7 @@ CircR= sqrt(Area/pi);
 % perimeter of circle of same area
 CircP = 2*pi*CircR;
 
-% average radius is the sqrt of area.nholes 
+% max radius is the sqrt of area.nholes 
 r_h= sqrt(area_h/nholes); 
 
 %waviness shape factor 
@@ -163,11 +163,14 @@ GArea= area_h/Area;
 % Bifrication ratio
 Bf = max(branch)+nholes;
 
+% dispersivity 
+Dis_A= Area/(FlowDistance*FlowWidth);
 
-SHAPES= [Name, Aspect, r_h, wave, circ, Bi, Bf, IOP, GArea]
+%1 Aspect, 2 Gap Radius, 3 Waviness, 4 Circularity, 5 Branching Index, 6 FlowWidth, 7 FlowDistance
+SHAPES= [Aspect, r_h, wave, circ, Bi, Dis_A, FlowWidth, FlowDistance]
 % add to file
-fid = fopen('shape.txt', 'a+');
-fprintf(fid, '%d %d %d %d %d %d %d %d %d\n', SHAPES);
-fclose(fid);
+%fid = fopen('shape.txt', 'a+');
+%fprintf(fid, '%d %d %d %d %d %d %d %d %d %d %d\n', SHAPES);
+%fclose(fid);
 
 end
